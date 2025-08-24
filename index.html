@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumSec - Advanced Cybersecurity</title>
+    <!-- Tailwind CSS CDN for modern utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a futuristic and professional look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom CSS for complex animations and visual effects */
+        :root {
+            --neon-blue: #00ffff;
+            --neon-purple: #ff00ff;
+            --dark-bg: #0d1117;
+            --gray-text: #8b949e;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* --- Matrix Rain Effect --- */
+        #matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            opacity: 0.1;
+        }
+
+        /* --- Animated Grid Background --- */
+        .grid-bg {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            animation: grid-movement 60s linear infinite;
+        }
+        @keyframes grid-movement {
+            from { background-position: 0 0; }
+            to { background-position: 5000px 5000px; }
+        }
+
+        /* --- Particle Animation --- */
+        #particles-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+        }
+
+        /* --- Global Glow Effect --- */
+        .glow-effect {
+            box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), 0 0 15px var(--neon-blue), 0 0 20px var(--neon-blue);
+        }
+        .glow-border {
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .glow-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 12px;
+            border: 2px solid;
+            border-image: linear-gradient(45deg, var(--neon-blue), var(--neon-purple)) 1;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: -1;
+        }
+        .glow-border:hover::before {
+            opacity: 1;
+        }
+        
+        /* New class for hover glow effect */
+        .hover-glow:hover {
+            box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), 0 0 15px var(--neon-blue), 0 0 20px var(--neon-blue);
+        }
+
+        /* --- Loading Screen --- */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--dark-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+            transition: opacity 1s ease-in-out;
+        }
+        .cyber-loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--neon-blue);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* --- Mouse Trail Effect --- */
+        .trail-dot {
+            position: fixed;
+            background: rgba(0, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            z-index: 999;
+            will-change: transform, opacity;
+        }
+
+        /* --- Scroll Animations --- */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="cyber-loader"></div>
+        <p class="mt-4 text-xl font-bold tracking-widest animate-pulse">Initializing...</p>
+    </div>
+
+    <!-- Background Canvases -->
+    <canvas id="particles-bg" class="absolute inset-0 z-0"></canvas>
+    <canvas id="matrix-rain" class="absolute top-0 left-0 w-full h-full z-10 opacity-10"></canvas>
+
+    <!-- Header & Navigation -->
+    <header class="relative z-50 py-4 px-6 md:px-12 bg-gray-900/60 backdrop-blur-sm sticky top-0">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold tracking-widest text-white hover:text-cyan-400 transition-colors duration-300">
+                <span class="text-neon-blue">Q</span>uantum<span class="text-neon-purple">Sec</span>
+            </a>
+            <div class="hidden md:flex space-x-8 text-lg">
+                <a href="#hero" class="hover:text-cyan-400 transition-colors duration-300">Home</a>
+                <a href="#services" class="hover:text-cyan-400 transition-colors duration-300">Services</a>
+                <a href="#about" class="hover:text-cyan-400 transition-colors duration-300">About Us</a>
+                <a href="#contact" class="hover:text-cyan-400 transition-colors duration-300">Contact</a>
+            </div>
+            <button id="menu-toggle" class="md:hidden text-2xl text-white hover:text-cyan-400 transition-colors duration-300 focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed top-0 left-0 w-full h-full bg-gray-900/90 z-40 transform -translate-x-full transition-transform duration-300 md:hidden flex flex-col items-center justify-center space-y-8 text-xl">
+        <button id="close-menu" class="absolute top-6 right-6 text-3xl text-white hover:text-cyan-400 transition-colors duration-300 focus:outline-none">
+            <i class="fas fa-times"></i>
+        </button>
+        <a href="#hero" class="hover:text-cyan-400 transition-colors duration-300">Home</a>
+        <a href="#services" class="hover:text-cyan-400 transition-colors duration-300">Services</a>
+        <a href="#about" class="hover:text-cyan-400 transition-colors duration-300">About Us</a>
+        <a href="#contact" class="hover:text-cyan-400 transition-colors duration-300">Contact</a>
+    </div>
+
+    <main class="relative z-20">
+
+        <!-- Hero Section -->
+        <section id="hero" class="relative min-h-screen flex items-center justify-center text-center p-6 fade-in-up">
+            <div class="absolute inset-0 grid-bg z-0"></div>
+            <div class="relative z-20">
+                <h1 class="text-4xl md:text-6xl font-bold text-white tracking-wide leading-tight">
+                    <span class="text-neon-blue">Securing</span> the Future, <span class="text-neon-purple">Today</span>.
+                </h1>
+                <p class="mt-4 text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto">
+                    Protecting your digital assets with cutting-edge cybersecurity solutions.
+                </p>
+                <div class="mt-8 space-x-4">
+                    <!-- Updated Get a Quote Button -->
+                    <a href="#contact" class="inline-block px-8 py-3 text-lg font-semibold rounded-full bg-neon-blue text-white hover:scale-105 transition-all duration-300 glow-effect">Get a Quote</a>
+                    <!-- Updated Explore Services Button -->
+                    <a href="#services" class="inline-block px-8 py-3 text-lg font-semibold rounded-full border-2 border-neon-purple text-neon-purple hover:bg-gray-800 hover:text-white hover-glow transition-all duration-300">Explore Services</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-20 px-6 fade-in-up">
+            <div class="container mx-auto text-center">
+                <h2 class="text-4xl font-bold mb-4">Our Services</h2>
+                <p class="text-xl text-gray-400 mb-12">Leveraging advanced technology to anticipate and neutralize threats.</p>
+                <div class="grid md:grid-cols-3 gap-8">
+
+                    <!-- Service Card 1: Penetration Testing -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-gray-700 glow-border hover:shadow-xl transition-shadow duration-300 fade-in-up">
+                        <i class="fas fa-shield-alt text-5xl text-neon-blue mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-2">Penetration Testing</h3>
+                        <p class="text-gray-400">Simulate a cyber attack to uncover vulnerabilities in your network, web, and mobile applications before malicious actors do.</p>
+                    </div>
+
+                    <!-- Service Card 2: Vulnerability Assessment -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-gray-700 glow-border hover:shadow-xl transition-shadow duration-300 fade-in-up" style="transition-delay: 0.1s;">
+                        <i class="fas fa-search text-5xl text-neon-purple mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-2">Vulnerability Assessment</h3>
+                        <p class="text-gray-400">Systematic analysis of your systems to identify, classify, and prioritize security weaknesses.</p>
+                    </div>
+
+                    <!-- Service Card 3: GRC Services -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-gray-700 glow-border hover:shadow-xl transition-shadow duration-300 fade-in-up" style="transition-delay: 0.2s;">
+                        <i class="fas fa-lock text-5xl text-neon-blue mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-2">GRC Services</h3>
+                        <p class="text-gray-400">Comprehensive Governance, Risk, and Compliance solutions to build a strong security posture and meet regulatory requirements.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="py-20 px-6 fade-in-up">
+            <div class="container mx-auto text-center">
+                <h2 class="text-4xl font-bold mb-4">About QuantumSec</h2>
+                <p class="text-xl text-gray-400 mb-12">
+                    We are a collective of elite ethical hackers and security experts dedicated to safeguarding the digital world.
+                </p>
+                <div class="flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12">
+                    <div class="md:w-1/2">
+                        <p class="text-lg text-gray-400 text-left leading-relaxed">
+                            QuantumSec was founded on the principle that proactive security is the only true defense. Our team has decades of combined experience in combating complex cyber threats across various industries. We believe in a collaborative approach, working with our clients to not just find vulnerabilities, but to build a robust and resilient security culture from the ground up.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2">
+                        <img src="https://placehold.co/600x400/172b4d/FFFFFF?text=Team+Photo" alt="QuantumSec Team" class="rounded-xl shadow-lg border border-gray-700 glow-border">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 px-6 fade-in-up">
+            <div class="container mx-auto">
+                <div class="bg-gray-800/50 backdrop-blur-sm p-8 md:p-16 rounded-xl shadow-lg border border-gray-700 glow-border">
+                    <h2 class="text-4xl font-bold text-center mb-4">Get in Touch</h2>
+                    <p class="text-center text-lg text-gray-400 mb-12">
+                        Ready to secure your future? Fill out the form below or contact us directly.
+                    </p>
+                    
+                    <form id="contact-form" class="max-w-xl mx-auto space-y-6">
+                        <div>
+                            <label for="name" class="block text-lg font-medium text-gray-300">Name</label>
+                            <input type="text" id="name" name="name" required class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent transition-all duration-300">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-lg font-medium text-gray-300">Email Address</label>
+                            <input type="email" id="email" name="email" required class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent transition-all duration-300">
+                        </div>
+                        <div>
+                            <label for="service" class="block text-lg font-medium text-gray-300">Interested Service</label>
+                            <select id="service" name="service" required class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent transition-all duration-300">
+                                <option value="" disabled selected>Select a service</option>
+                                <option value="Penetration Testing">Penetration Testing</option>
+                                <option value="Vulnerability Assessment">Vulnerability Assessment</option>
+                                <option value="GRC Services">GRC Services</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="message" class="block text-lg font-medium text-gray-300">Message</label>
+                            <textarea id="message" name="message" rows="4" required class="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent transition-all duration-300"></textarea>
+                        </div>
+                        <div class="text-center">
+                            <!-- Updated Send Message Button -->
+                            <button type="submit" class="w-full px-8 py-4 text-xl font-bold rounded-full bg-gradient-to-r from-neon-blue to-neon-purple text-white hover:scale-105 transition-all duration-300 glow-effect">Send Message</button>
+                        </div>
+                        <div id="form-status" class="mt-4 text-center font-bold text-lg hidden"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 text-center text-gray-500 border-t border-gray-700/50">
+        <div class="container mx-auto">
+            <p>&copy; 2024 QuantumSec. All Rights Reserved. | Designed with Cyber Precision</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- JavaScript for dynamic functionality and animations ---
+
+        // Helper function for smooth scrolling
+        function smoothScroll(target) {
+            const element = document.querySelector(target);
+            if (element) {
+                window.scrollTo({
+                    top: element.offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Hide loading screen after 1.5 seconds
+            const loadingScreen = document.getElementById('loading-screen');
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => loadingScreen.style.display = 'none', 1000);
+            }, 1500);
+
+            // Mobile menu functionality
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const closeMenu = document.getElementById('close-menu');
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.remove('-translate-x-full');
+            });
+            closeMenu.addEventListener('click', () => {
+                mobileMenu.classList.add('-translate-x-full');
+            });
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('-translate-x-full');
+                    const targetId = link.getAttribute('href');
+                    smoothScroll(targetId);
+                });
+            });
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                if (anchor.getAttribute('href').length > 1) { // Exclude just "#"
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        smoothScroll(targetId);
+                    });
+                }
+            });
+
+            // Intersection Observer for scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in-up').forEach(element => {
+                observer.observe(element);
+            });
+
+            // --- Canvas Animations ---
+            
+            // Matrix Rain Effect
+            const matrixCanvas = document.getElementById('matrix-rain');
+            const matrixCtx = matrixCanvas.getContext('2d');
+            
+            let matrixWidth, matrixHeight;
+            const matrixColumns = 20; // Number of columns in the rain effect
+            let matrixDrops = [];
+
+            function resizeMatrixCanvas() {
+                matrixWidth = matrixCanvas.width = window.innerWidth;
+                matrixHeight = matrixCanvas.height = window.innerHeight;
+                
+                matrixDrops = [];
+                for (let i = 0; i < matrixColumns; i++) {
+                    matrixDrops[i] = { x: Math.random() * matrixWidth, y: Math.random() * matrixHeight, speed: Math.random() * 2 + 1 };
+                }
+            }
+            window.addEventListener('resize', resizeMatrixCanvas);
+            resizeMatrixCanvas();
+
+            function drawMatrix() {
+                // Dim the characters slightly each frame for the fade effect
+                matrixCtx.fillStyle = 'rgba(13, 17, 23, 0.05)';
+                matrixCtx.fillRect(0, 0, matrixWidth, matrixHeight);
+                
+                matrixCtx.fillStyle = '#00ff41'; // Color of the rain
+                matrixCtx.font = '15px monospace';
+                
+                for (let i = 0; i < matrixDrops.length; i++) {
+                    let text = String.fromCharCode(48 + Math.random() * 75);
+                    matrixCtx.fillText(text, matrixDrops[i].x, matrixDrops[i].y);
+                    
+                    // Sending the drop back to the top when it's out of screen
+                    if (matrixDrops[i].y > matrixHeight) {
+                        matrixDrops[i].y = 0;
+                        matrixDrops[i].x = Math.random() * matrixWidth;
+                        matrixDrops[i].speed = Math.random() * 2 + 1;
+                    }
+                    
+                    matrixDrops[i].y += matrixDrops[i].speed;
+                }
+            }
+            setInterval(drawMatrix, 50);
+
+            // Particle Background Effect
+            const particlesCanvas = document.getElementById('particles-bg');
+            const particlesCtx = particlesCanvas.getContext('2d');
+            let particlesWidth, particlesHeight;
+            let particles = [];
+            const numParticles = 100;
+            const particleSpeed = 0.5;
+
+            function resizeParticlesCanvas() {
+                particlesWidth = particlesCanvas.width = window.innerWidth;
+                particlesHeight = particlesCanvas.height = window.innerHeight;
+                particles = [];
+                for (let i = 0; i < numParticles; i++) {
+                    particles.push(new Particle());
+                }
+            }
+            window.addEventListener('resize', resizeParticlesCanvas);
+            resizeParticlesCanvas();
+
+            function Particle() {
+                this.x = Math.random() * particlesWidth;
+                this.y = Math.random() * particlesHeight;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * particleSpeed;
+                this.speedY = (Math.random() - 0.5) * particleSpeed;
+                this.color = `rgba(0, 255, 255, ${Math.random() * 0.5 + 0.2})`;
+            }
+
+            Particle.prototype.update = function() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > particlesWidth) this.speedX = -this.speedX;
+                if (this.y < 0 || this.y > particlesHeight) this.speedY = -this.speedY;
+            };
+
+            Particle.prototype.draw = function() {
+                particlesCtx.beginPath();
+                particlesCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                particlesCtx.fillStyle = this.color;
+                particlesCtx.shadowBlur = 10;
+                particlesCtx.shadowColor = this.color;
+                particlesCtx.fill();
+            };
+
+            function animateParticles() {
+                particlesCtx.clearRect(0, 0, particlesWidth, particlesHeight);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                }
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+
+            // Mouse trail effect
+            const trailContainer = document.body;
+            const maxDots = 20;
+            let trailDots = [];
+
+            trailContainer.addEventListener('mousemove', function(e) {
+                const newDot = document.createElement('div');
+                newDot.className = 'trail-dot';
+                newDot.style.left = `${e.clientX}px`;
+                newDot.style.top = `${e.clientY}px`;
+                newDot.style.width = `8px`;
+                newDot.style.height = `8px`;
+                trailContainer.appendChild(newDot);
+                trailDots.push(newDot);
+
+                if (trailDots.length > maxDots) {
+                    const oldestDot = trailDots.shift();
+                    oldestDot.remove();
+                }
+
+                // Fade out and shrink the older dots
+                for (let i = 0; i < trailDots.length; i++) {
+                    const dot = trailDots[i];
+                    const scale = (i / maxDots) * 0.5 + 0.5;
+                    const opacity = i / maxDots;
+                    dot.style.transform = `scale(${scale})`;
+                    dot.style.opacity = opacity;
+                }
+            });
+
+            // Contact form submission
+            const contactForm = document.getElementById('contact-form');
+            const formStatus = document.getElementById('form-status');
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Simulate form submission
+                formStatus.style.display = 'block';
+                formStatus.textContent = 'Submitting...';
+                formStatus.style.color = '#fff';
+                
+                setTimeout(() => {
+                    formStatus.textContent = 'Thank you! Your message has been sent.';
+                    formStatus.style.color = 'var(--neon-blue)';
+                    contactForm.reset();
+                }, 2000);
+            });
+
+        });
+    </script>
+</body>
+</html>
